@@ -21,19 +21,7 @@ class AuthController extends Controller
             return $this->redirectAfterAuth(Auth::user());
         }
 
-        return Inertia::render('Auth/Login', [
-            'perfis_demo' => Utilizador::with('unidade.provincia')->get()->map(function ($u) {
-                return [
-                    'id' => $u->id,
-                    'nip' => $u->nip,
-                    'nome' => $u->nome_completo,
-                    'email' => $u->email,
-                    'perfil' => $u->perfil,
-                    'unidade' => $u->unidade?->nome,
-                    'provincia' => $u->unidade?->provincia?->nome ?? 'Nacional',
-                ];
-            }),
-        ]);
+        return Inertia::render('Auth/Login');
     }
 
     /**
