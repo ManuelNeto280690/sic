@@ -1,0 +1,132 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+@source '../**/*.ts';
+@source '../**/*.tsx';
+
+@theme {
+    --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+    --color-police-bg: #0d1a26;
+    --color-police-surface: #132235;
+    --color-police-card: #17283c;
+    --color-police-card-hover: #1e334d;
+    --color-police-nav: #09131d;
+    --color-police-border: #223750;
+    --color-police-border-light: #2d4766;
+    --color-police-blue: #1d4ed8;
+    --color-police-blue-hover: #2563eb;
+    --color-police-gold: #c5a059;
+    --color-police-gold-hover: #dfc07a;
+    --color-police-red: #dc2626;
+    --color-police-emerald: #059669;
+    --color-police-amber: #d97706;
+}
+
+/* Custom Executive Scrollbars */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: #0d1a26;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #223750;
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #3b587d;
+}
+
+/* Police Clean Shadow Utilities */
+.police-card {
+    background: #132235;
+    border: 1px solid #223750;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.police-card:hover {
+    border-color: #2d4766;
+}
+
+/* Clean calm background without distracting grid lines */
+.police-backdrop {
+    background-color: #0d1a26;
+}
+
+@page {
+    size: A4 portrait;
+    margin: 0;
+}
+
+@media print {
+    @page {
+        size: A4 portrait;
+        margin: 0;
+    }
+
+    /* Esconde todo o layout de aplicação da plataforma táctica */
+    aside,
+    header,
+    nav,
+    button,
+    form,
+    .no-print,
+    .tactical-sidebar,
+    .tactical-header,
+    .multi-tab-workspace,
+    [role="tablist"] {
+        display: none !important;
+    }
+
+    /* Regra Mestra: Esconde todos os nós do ecrã por omissão */
+    body * {
+        visibility: hidden !important;
+    }
+
+    /* Torna visível estritamente a Folha Oficial A4 do Auto e seus descendentes */
+    #documento-imprimir-a4,
+    #documento-imprimir-a4 * {
+        visibility: visible !important;
+    }
+
+    /* A Folha Oficial A4 posiciona-se no topo exato da página de impressão com as suas próprias margens */
+    #documento-imprimir-a4 {
+        display: block !important;
+        position: absolute !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        padding: 16mm 20mm !important;
+        margin: 0 !important;
+        box-shadow: none !important;
+        border: none !important;
+        background: #ffffff !important;
+        color: #000000 !important;
+    }
+
+    body,
+    #app,
+    main {
+        background: #ffffff !important;
+        color: #000000 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        width: 100% !important;
+    }
+
+    table {
+        border-collapse: collapse !important;
+        width: 100% !important;
+    }
+}
