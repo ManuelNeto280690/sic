@@ -39,21 +39,6 @@ export const TacticalHeader: React.FC<TacticalHeaderProps> = ({
         });
     };
 
-    const handleSwitchPerfil = (userId: string) => {
-        router.post(route('profile.switch'), { user_id: userId }, {
-            onSuccess: () => setProfileModalOpen(false),
-        });
-    };
-
-    const demoUsers = [
-        { id: '1', perfil: 'DIRETOR_NACIONAL', label: 'Diretor Nacional (Luanda Central)', nip: 'SIC-DIR-001' },
-        { id: '2', perfil: 'INVESTIGADOR', label: 'Investigador (Luanda)', nip: 'SIC-INV-0042' },
-        { id: '3', perfil: 'COMANDANTE_PROVINCIAL', label: 'Comando Provincial (Benguela)', nip: 'SIC-CMD-BGU' },
-        { id: '4', perfil: 'OPERADOR_SME', label: 'Operador SME (Fronteira 4 de Fevereiro)', nip: 'SME-AER-007' },
-        { id: '5', perfil: 'MAGISTRADO_PGR', label: 'Magistrado PGR (Ministério Público)', nip: 'PGR-MAG-0099' },
-        { id: '6', perfil: 'ADMIN_SISTEMA', label: 'Administrador de Sistema (Cibersegurança)', nip: 'SIC-ADM-001' },
-    ];
-
     return (
         <>
             <header className="h-14 bg-[#09131d] border-b border-[#223750] px-3 sm:px-6 flex items-center justify-between select-none z-30 sticky top-0">
@@ -143,10 +128,10 @@ export const TacticalHeader: React.FC<TacticalHeaderProps> = ({
                     {/* Botão de Troca Rápida de Perfil */}
                     <button
                         onClick={() => setProfileModalOpen(true)}
-                        title="Alternar Perfil para Homologação Operacional"
-                        className="flex items-center gap-1.5 px-2.5 py-1 bg-[#132235] border border-[#223750] hover:border-slate-500 rounded-md text-xs font-sans text-slate-200 transition-colors"
+                        title="Ver Ficha do Utilizador Ativo"
+                        className="flex items-center gap-1.5 px-2.5 py-1 bg-[#132235] border border-[#223750] hover:border-[#c5a059]/60 rounded-md text-xs font-sans text-slate-200 transition-colors cursor-pointer"
                     >
-                        <KeyRound className="w-3.5 h-3.5 text-[#c5a059]" />
+                        <UserCheck className="w-3.5 h-3.5 text-[#c5a059]" />
                         <span className="hidden xl:inline text-[11px] font-medium">{user?.perfil?.replace('_', ' ')}</span>
                     </button>
 
@@ -164,7 +149,7 @@ export const TacticalHeader: React.FC<TacticalHeaderProps> = ({
                     <button
                         onClick={() => router.post(route('logout'))}
                         title="Terminar Sessão"
-                        className="p-1.5 text-slate-400 hover:text-rose-400 hover:bg-rose-950/20 rounded-md border border-transparent hover:border-rose-900/40 transition-colors"
+                        className="p-1.5 text-slate-400 hover:text-rose-400 hover:bg-rose-950/20 rounded-md border border-transparent hover:border-rose-900/40 transition-colors cursor-pointer"
                     >
                         <LogOut className="w-4 h-4" />
                     </button>
@@ -174,45 +159,67 @@ export const TacticalHeader: React.FC<TacticalHeaderProps> = ({
             {/* Modal de Busca Omnibox */}
             <OmniboxModal isOpen={isOmniboxOpen} onClose={() => setIsOmniboxOpen(false)} />
 
-            {/* Modal de Homologação / Troca Rápida de Perfil */}
+            {/* Modal de Ficha do Utilizador Autenticado */}
             {profileModalOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
-                    <div className="w-full max-w-lg bg-[#132235] border border-[#223750] rounded-lg p-5 shadow-2xl">
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in">
+                    <div className="w-full max-w-md bg-[#132235] border border-[#223750] rounded-xl p-6 shadow-2xl space-y-4 font-sans">
                         <div className="flex items-center justify-between pb-3 border-b border-[#223750]">
                             <div className="flex items-center gap-2">
-                                <KeyRound className="w-5 h-5 text-[#c5a059]" />
-                                <h3 className="text-sm font-semibold text-slate-100 font-sans">
-                                    Troca de Perfil Operacional (Homologação)
+                                <Shield className="w-5 h-5 text-[#c5a059]" />
+                                <h3 className="text-sm font-bold text-slate-100 uppercase tracking-wide">
+                                    Ficha do Utilizador Autenticado
                                 </h3>
                             </div>
-                            <button onClick={() => setProfileModalOpen(false)} className="text-slate-400 hover:text-slate-200 p-1">
+                            <button onClick={() => setProfileModalOpen(false)} className="text-slate-400 hover:text-slate-200 p-1 cursor-pointer">
                                 ✕
                             </button>
                         </div>
-                        <p className="text-xs text-slate-400 mt-2 mb-4 font-sans">
-                            Selecione qualquer um dos perfis para testar as regras de acesso e janelas especializadas.
-                        </p>
-                        <div className="space-y-2">
-                            {demoUsers.map((d) => (
-                                <button
-                                    key={d.nip}
-                                    onClick={() => {
-                                        router.post(route('login.post'), {
-                                            identificador: d.nip,
-                                            password: 'SicAngola#2026',
-                                        }, {
-                                            onSuccess: () => setProfileModalOpen(false),
-                                        });
-                                    }}
-                                    className="w-full flex items-center justify-between p-3 bg-[#17283c] hover:bg-[#1e334d] border border-[#223750] hover:border-slate-500 rounded-md text-left transition-colors font-sans group"
-                                >
-                                    <div>
-                                        <div className="text-xs font-semibold text-slate-100 group-hover:text-white">{d.label}</div>
-                                        <div className="text-[11px] font-mono text-slate-400 mt-0.5">NIP: {d.nip} • {d.perfil}</div>
-                                    </div>
-                                    <span className="text-xs text-slate-400 group-hover:text-slate-200">Selecionar →</span>
-                                </button>
-                            ))}
+
+                        <div className="bg-[#0b141f] border border-[#1e2f42] rounded-lg p-4 space-y-2 text-xs font-mono">
+                            <div className="flex items-center justify-between">
+                                <span className="text-slate-400">Nome Completo:</span>
+                                <span className="text-slate-100 font-bold font-sans">{user?.nome_completo}</span>
+                            </div>
+                            <div className="flex items-center justify-between">
+                                <span className="text-slate-400">NIP Operacional:</span>
+                                <span className="text-[#c5a059] font-bold">{user?.nip}</span>
+                            </div>
+                            <div className="flex items-center justify-between">
+                                <span className="text-slate-400">E-mail:</span>
+                                <span className="text-slate-200">{user?.email}</span>
+                            </div>
+                            <div className="flex items-center justify-between">
+                                <span className="text-slate-400">Perfil de Acesso:</span>
+                                <span className="px-2 py-0.5 rounded bg-[#132233] text-slate-200 border border-[#223954]">
+                                    {user?.perfil?.replace(/_/g, ' ')}
+                                </span>
+                            </div>
+                            <div className="flex items-center justify-between">
+                                <span className="text-slate-400">Jurisdição / Província:</span>
+                                <span className="text-slate-200">{activeProv?.nome ?? 'Nacional'}</span>
+                            </div>
+                        </div>
+
+                        <div className="text-[11px] text-slate-400 leading-relaxed bg-[#0d1a26] p-3 rounded border border-[#1b2b3d]">
+                            Sessão autenticada sob protocolo seguro de auditoria imutável (Art. 6.º da Lei das Comunicações Eletrónicas).
+                        </div>
+
+                        <div className="pt-2 flex items-center justify-between gap-3">
+                            <button
+                                type="button"
+                                onClick={() => setProfileModalOpen(false)}
+                                className="px-3.5 py-1.5 bg-[#17283c] hover:bg-[#1f3752] text-slate-200 rounded text-xs cursor-pointer"
+                            >
+                                Fechar
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => router.post(route('logout'))}
+                                className="px-3.5 py-1.5 bg-rose-950/70 hover:bg-rose-900 border border-rose-800 text-rose-200 rounded text-xs flex items-center gap-1.5 cursor-pointer"
+                            >
+                                <LogOut className="w-3.5 h-3.5" />
+                                <span>Terminar Sessão</span>
+                            </button>
                         </div>
                     </div>
                 </div>

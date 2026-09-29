@@ -160,10 +160,10 @@ export const TacticalSidebar: React.FC<TacticalSidebarProps> = ({
         <aside
             className={`${
                 collapsed ? 'w-16' : 'w-72'
-            } bg-[#09131d] border-r border-[#223750] flex flex-col shrink-0 select-none z-20 transition-all duration-200 h-full max-h-screen`}
+            } bg-[#09131d] border-r border-[#223750] flex flex-col shrink-0 select-none z-20 transition-all duration-200 h-full overflow-hidden`}
         >
             {/* Lista com scroll independente */}
-            <div className="flex-1 overflow-y-auto p-3 space-y-4">
+            <div className="flex-1 overflow-y-auto min-h-0 p-3 space-y-4">
                 {sections.map((sec, idx) => (
                     <div key={idx}>
                         {!collapsed && (

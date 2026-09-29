@@ -34,22 +34,22 @@ export const TacticalLayout: React.FC<TacticalLayoutProps> = ({ title, children 
     };
 
     return (
-        <div className="min-h-screen bg-[#0d1a26] text-slate-100 flex flex-col font-sans antialiased">
-            {/* Cabeçalho Institucional com HUD 48h */}
-            <div className="print:hidden no-print">
+        <div className="h-screen w-full overflow-hidden bg-[#0d1a26] text-slate-100 flex flex-col font-sans antialiased">
+            {/* Cabeçalho Institucional Fixo no Topo com HUD 48h */}
+            <div className="shrink-0 z-30 print:hidden no-print">
                 <TacticalHeader onToggleSidebar={toggleSidebar} sidebarCollapsed={sidebarCollapsed} />
             </div>
 
-            <div className="flex-1 flex overflow-hidden print:overflow-visible print:block">
-                {/* Barra Lateral Solene */}
-                <div className="print:hidden no-print">
+            <div className="flex-1 flex overflow-hidden min-h-0 print:overflow-visible print:block">
+                {/* Barra Lateral Solene Fixa à Esquerda */}
+                <div className="h-full shrink-0 print:hidden no-print">
                     <TacticalSidebar collapsed={sidebarCollapsed} onToggle={toggleSidebar} />
                 </div>
 
-                {/* Área de Trabalho Principal com Multi-Abas */}
-                <main className="flex-1 flex flex-col min-w-0 bg-[#0d1a26] overflow-y-auto print:bg-white print:p-0 print:m-0 print:overflow-visible print:block">
+                {/* Área de Trabalho Principal com Scroll Próprio e Multi-Abas */}
+                <main className="flex-1 flex flex-col min-w-0 min-h-0 h-full bg-[#0d1a26] overflow-y-auto print:bg-white print:p-0 print:m-0 print:overflow-visible print:block">
                     {/* Workspace Multi-Abas (IndexedDB) */}
-                    <div className="print:hidden no-print">
+                    <div className="shrink-0 print:hidden no-print sticky top-0 z-20 bg-[#0d1a26]">
                         <MultiTabWorkspace currentUrl={url} currentTitle={title} />
                     </div>
 
