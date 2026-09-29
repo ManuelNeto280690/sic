@@ -202,6 +202,8 @@ export const LegalCopilotDrawer: React.FC = () => {
             const response = await axios.post('/copiloto/chat', {
                 messages: updatedMessages.map(m => ({ role: m.role, content: m.content })),
                 context: contextPayload,
+            }, {
+                timeout: 25000,
             });
 
             if (response.data && response.data.reply) {
@@ -215,10 +217,16 @@ export const LegalCopilotDrawer: React.FC = () => {
                 setMessages(prev => [...prev, botMsg]);
             }
         } catch (error: any) {
+            let errorText = 'Não foi possível obter resposta no momento. Por favor, tente novamente.';
+            if (error.code === 'ECONNABORTED' || error.message?.includes('timeout')) {
+                errorText = 'O tempo limite de processamento foi atingido. Por favor, tente reenviar a solicitação.';
+            } else if (error.response?.data?.message) {
+                errorText = error.response.data.message;
+            }
             const botErrorMsg: ChatMessage = {
                 id: `err-${Date.now()}`,
                 role: 'assistant',
-                content: `⚠️ Não foi possível obter o parecer no momento. Detalhe técnico: ${error.response?.data?.message || error.message}`,
+                content: `⚠️ ${errorText}`,
                 timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
             };
             setMessages(prev => [...prev, botErrorMsg]);
@@ -569,14 +577,18 @@ export const LegalCopilotDrawer: React.FC = () => {
                     {isLoading && (
                         <div className="flex flex-col items-start">
                             <div className="flex items-center gap-1.5 mb-1 px-1 text-[10px] font-mono text-slate-400">
-                                <Bot className="w-3 h-3 text-blue-400" />
-                                <span className="font-semibold text-blue-300">Copiloto Jurídico</span>
+                                <Bot className="w-3 h-3 text-blue-400 animate-pulse" />
+                                <span className="font-semibold text-blue-300">Copiloto Institucional</span>
                                 <span>•</span>
-                                <span>A fundamentar normas e factos...</span>
+                                <span>A processar resposta...</span>
                             </div>
-                            <div className="bg-[#111e2e] border border-[#223750] rounded-lg rounded-tl-none p-3 max-w-[85%] flex items-center gap-2 text-xs text-slate-300">
-                                <div className="w-2 h-2 rounded-full bg-blue-400 animate-ping"></div>
-                                <span className="font-mono text-[11px] text-blue-300">Consultando Código Penal, CPP e Constituição...</span>
+                            <div className="bg-[#111e2e] border border-[#223750] rounded-lg rounded-tl-none p-3 max-w-[85%] flex items-center gap-3 text-xs text-slate-300 shadow-sm">
+                                <div className="flex items-center space-x-1.5">
+                                    <div className="w-2 h-2 rounded-full bg-blue-400 animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                                    <div className="w-2 h-2 rounded-full bg-blue-400 animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                                    <div className="w-2 h-2 rounded-full bg-blue-400 animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                                </div>
+                                <span className="font-mono text-[11px] text-slate-300">A processar a resposta...</span>
                             </div>
                         </div>
                     )}

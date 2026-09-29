@@ -45,7 +45,8 @@ class ApidotLegalCopilotService
                 'Content-Type' => 'application/json',
                 'Accept' => 'application/json',
             ])
-            ->timeout(35)
+            ->connectTimeout(3)
+            ->timeout(10)
             ->post("{$this->baseUrl}/chat/completions", [
                 'model' => $this->model,
                 'messages' => $payloadMessages,
