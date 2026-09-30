@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\ProcessoCrime;
 use App\Models\Detencao;
 use App\Models\Ocorrencia;
+use App\Models\Provincia;
 use App\Services\ApidotLegalCopilotService;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CopilotoJuridicoController extends Controller
 {
@@ -93,9 +95,63 @@ class CopilotoJuridicoController extends Controller
             }
         }
 
+        // Enriquecer sempre com o panorama operacional real da plataforma (províncias, ocorrências, processos)
+        $context['plataforma_dados'] = $this->getPlatformOperationalData();
+
         $result = $this->copilotService->chat($messages, $context);
 
         return response()->json($result);
+    }
+
+    /**
+     * Obtém o panorama em tempo real da base de dados do SIGD-SIC.
+     */
+    protected function getPlatformOperationalData(): array
+    {
+        try {
+            $totalOcorrencias = Ocorrencia::count();
+
+            $ocorrenciasPorProvincia = DB::table('ocorrencias')
+                ->join('geografia_provincias', 'ocorrencias.provincia_id', '=', 'geografia_provincias.id')
+                ->select('geografia_provincias.nome as provincia', DB::raw('count(*) as total'))
+                ->groupBy('geografia_provincias.nome')
+                ->orderByDesc('total')
+                ->pluck('total', 'provincia')
+                ->toArray();
+
+            $totalProcessos = ProcessoCrime::count();
+            $processosPorEstado = ProcessoCrime::select('estado', DB::raw('count(*) as total'))
+                ->groupBy('estado')
+                ->pluck('total', 'estado')
+                ->toArray();
+
+            $totalDetencoes = Detencao::count();
+            $detencoesExcedidas48h = Detencao::where('estado_custodia', 'DETIDO')
+                ->where('data_hora_detencao', '<=', now()->subHours(48))
+                ->count();
+
+            $totalProvincias = Provincia::count();
+
+            return [
+                'total_ocorrencias' => $totalOcorrencias,
+                'ocorrencias_por_provincia' => $ocorrenciasPorProvincia,
+                'total_processos' => $totalProcessos,
+                'processos_por_estado' => $processosPorEstado,
+                'total_detencoes' => $totalDetencoes,
+                'detencoes_excedidas_48h' => $detencoesExcedidas48h,
+                'total_provincias' => $totalProvincias,
+            ];
+        } catch (\Throwable $e) {
+            return [
+                'total_ocorrencias' => 0,
+                'ocorrencias_por_provincia' => [],
+                'total_processos' => 0,
+                'processos_por_estado' => [],
+                'total_detencoes' => 0,
+                'detencoes_excedidas_48h' => 0,
+                'total_provincias' => 18,
+            ];
+        }
     }
 
     /**
